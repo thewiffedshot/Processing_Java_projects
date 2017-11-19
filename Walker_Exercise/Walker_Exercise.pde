@@ -1,4 +1,5 @@
 import java.util.*;
+import java.lang.*;
 ArrayList<Walker> pauls = new ArrayList();
 ArrayList<Tree> trees = new ArrayList();
 Random randy = new Random();
@@ -19,8 +20,8 @@ void draw()
 {
   for(Walker paul : pauls)
   {
-    paul.x += map(noise(t), 0, 1, -50, 50);//MonteCarlo(-20, 20);
-    paul.y += map(noise(t + yOff), 0, 1, -50, 50);//MonteCarlo(-20, 20);
+    paul.x += map(noise(t), 0, 1, -50, 50); //MonteCarlo(-20, 20);
+    paul.y += map(noise(t + yOff), 0, 1, -50, 50); //MonteCarlo(-20, 20);
     
     /*float rand = random(1);
     

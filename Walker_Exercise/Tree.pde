@@ -3,7 +3,8 @@ class Tree
   float x, y, size = 16;
   float angle = 65;
   PVector centre, A, B, C, D, E, F, G;
-  float[][] collisionLines = new float[6][3];
+  float[][] hitbox = new float[6][3];
+  String hitboxType = "Polygon";
   
   Tree(float _x, float _y)
   {
@@ -11,7 +12,7 @@ class Tree
     y = _y;
     
     createPoints();
-    createLines();
+    createHitbox();
   }
   
   Tree(float _x, float _y, float _size)
@@ -21,7 +22,7 @@ class Tree
     size = _size;
     
     createPoints();
-    createLines();
+    createHitbox();
   }
   
   Tree(float _x, float _y, float _size, float _angle)
@@ -32,7 +33,7 @@ class Tree
     angle = constrain(_angle, 45, 70);
     
     createPoints();
-    createLines();
+    createHitbox();
   }
   
   void createPoints()
@@ -47,37 +48,37 @@ class Tree
     G = new PVector(E.x, y + ((2f/3) * size));
   }
   
-  void createLines()
+  void createHitbox()
   {
     //AB
-    collisionLines[0][0] = 0;
-    collisionLines[0][1] = B.x - A.x;
-    collisionLines[0][2] = -A.y * (B.x - A.y);
+    hitbox[0][0] = 0;
+    hitbox[0][1] = B.x - A.x;
+    hitbox[0][2] = -A.y * (B.x - A.y);
     
     //BC
-    collisionLines[1][0] = -(C.y - B.y);
-    collisionLines[1][1] = C.x - B.x;
-    collisionLines[1][2] = C.y * (C.x + B.x) - C.x * (C.y + B.y);
+    hitbox[1][0] = -(C.y - B.y);
+    hitbox[1][1] = C.x - B.x;
+    hitbox[1][2] = C.y * (C.x + B.x) - C.x * (C.y + B.y);
     
     //AC
-    collisionLines[2][0] = -(C.y - A.y);
-    collisionLines[2][1] = C.x - A.x;
-    collisionLines[2][2] = C.y * (C.x + A.x) - C.x * (C.y + A.y);
+    hitbox[2][0] = -(C.y - A.y);
+    hitbox[2][1] = C.x - A.x;
+    hitbox[2][2] = C.y * (C.x + A.x) - C.x * (C.y + A.y);
     
     //FG
-    collisionLines[3][0] = 0;
-    collisionLines[3][1] = G.x - F.x;
-    collisionLines[3][2] = -F.y * (G.x - F.y);
+    hitbox[3][0] = 0;
+    hitbox[3][1] = G.x - F.x;
+    hitbox[3][2] = -F.y * (G.x - F.y);
     
     //DF
-    collisionLines[3][0] = F.y - D.y;
-    collisionLines[3][1] = 0;
-    collisionLines[3][2] = D.x * (D.y - F.y);
+    hitbox[3][0] = F.y - D.y;
+    hitbox[3][1] = 0;
+    hitbox[3][2] = D.x * (D.y - F.y);
     
     //EG
-    collisionLines[3][0] = G.y - E.y;
-    collisionLines[3][1] = 0;
-    collisionLines[3][2] = D.x * (D.y - F.y) + (2f / 3 * B.copy().sub(A).mag());
+    hitbox[3][0] = G.y - E.y;
+    hitbox[3][1] = 0;
+    hitbox[3][2] = D.x * (D.y - F.y) + (2f / 3 * B.copy().sub(A).mag());
   }
   
   void drawTree()
