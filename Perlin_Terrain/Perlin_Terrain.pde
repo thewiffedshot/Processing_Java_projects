@@ -1,36 +1,53 @@
-int interval = 10;
+int interval = 20;
 int rows, cols;
 float xOff = 0, yOff = 0;
 float[][] heightMap;
 float time = 0;
+color background = color(135, 206, 250);
 
 void setup()
 {
   size(1280, 720, P3D);
-  background(0, 51, 102);
+  background(background);
   
   frameRate(60);
+  noiseDetail(8);
   
-  rows = height / interval;
-  cols = width / interval;
+  
+  rows = 3 * height / interval;
+  cols = 2 * width / interval;
   
   heightMap = new float[rows + 2][cols + 1];  
+  
+  
 }
 
 void draw()
 {
   updateTerrain();
+    
+  background(background);
   
-  background(0, 51, 102);
+  pushMatrix();
+  
+  fill(255, 255, 0);
+  ellipse(0, 0, map(sin(time), -1, 1, 0.95f, 1f) * 250, map(sin(time), -1, 1, 0.95f, 1f) * 250);
+  
+  popMatrix();
+  
+  pushMatrix();
+
+  pointLight(255, 255, 255, width / 2, 150, 500);
   
   translate(width/2, height/2);
   rotateX(PI/3);
-  translate(-width/2, -height/2, -200);
+  //rotateZ(time / 80);
+  translate(-width, -height, -200);
     
   for (int y = 0; y <= rows; y++)
   {  
-    noFill();
-    stroke(255, 0, 255);
+    fill(0, 223, 50);
+    noStroke();
     
     beginShape(TRIANGLE_STRIP);
     
@@ -42,6 +59,8 @@ void draw()
     
     endShape();
   }
+  
+  popMatrix();
 }
 
 void updateTerrain()
@@ -56,11 +75,11 @@ void updateTerrain()
     
     for (int x = 0; x <= cols; x++)
     {
-      heightMap[y][x] = map(noise(xOff, yOff), 0, 1, 0, 100);
+      heightMap[y][x] = map(noise(xOff, yOff), 0, 1, 0, 250);
       
-      xOff += 0.3f;
+      xOff += 0.1f;
     }
     
-    yOff += 0.3f;
+    yOff += 0.1f;
   }
 }
