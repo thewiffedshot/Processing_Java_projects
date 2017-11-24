@@ -18,82 +18,84 @@ float yOff = 1337;
 
 void draw()
 {
-  for(Walker paul : pauls)
-  {
-    paul.x += map(noise(t), 0, 1, -50, 50); //MonteCarlo(-20, 20);
-    paul.y += map(noise(t + yOff), 0, 1, -50, 50); //MonteCarlo(-20, 20);
+    for(Walker paul : pauls)
+    {
+        paul.x += map(noise(t), 0, 1, -50, 50); //MonteCarlo(-20, 20);
+        paul.y += map(noise(t + yOff), 0, 1, -50, 50); //MonteCarlo(-20, 20);
     
-    /*float rand = random(1);
+        /*float rand = random(1);
     
-    if (paul.x <= 0 || paul.x >= width || paul.y <= 0 || paul.y >= height) paul.D = -1;
+        if (paul.x <= 0 || paul.x >= width || paul.y <= 0 || paul.y >= height) paul.D = -1;
 
-    if (sqrt(pow(paul.x - mouseX, 2) + pow(paul.y - mouseY, 2)) <= 15) paul.D = 1;
+        if (sqrt(pow(paul.x - mouseX, 2) + pow(paul.y - mouseY, 2)) <= 15) paul.D = 1;
     
-    if (rand <= 0.1f)
-    {
-        if (mouseX > paul.x)
-        {//paul.x--; 
-          paul.x -= paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
-        }
-        else if (mouseX < paul.x) //paul.x++;
-        { 
-          paul.x += paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);          
-        }
-        if (mouseY > paul.y) //paul.y--;
+        if (rand <= 0.1f)
         {
-          paul.y -= paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+            if (mouseX > paul.x)
+            {//paul.x--; 
+              paul.x -= paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+            }
+            else if (mouseX < paul.x) //paul.x++;
+            { 
+              paul.x += paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);          
+            }
+            if (mouseY > paul.y) //paul.y--;
+            {
+              paul.y -= paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+            }
+            else if (mouseY < paul.y) //paul.y++;
+            {
+              paul.y += paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+            }
         }
-        else if (mouseY < paul.y) //paul.y++;
+        else if (rand > 0.1f && rand <= 0.3f)
         {
-          paul.y += paul.D * (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+            //paul.x++; 
+            paul.x += (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
         }
-    }
-    else if (rand > 0.1f && rand <= 0.3f)
-    {
-        //paul.x++; 
-        paul.x += (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
-    }
-    else if (rand > 0.3f && rand <= 0.5f)
-    {
-        //paul.x--;
-        paul.x -= (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
-    }  
-    else if (rand > 0.5f && rand <= 0.7f)
-    {
-        //paul.y++;
-        paul.y += (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
-    }
-    else if (rand > 0.7f && rand < 0.9f)
-    {
-        //paul.y--;
-        paul.y -= (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
-    }*/
+        else if (rand > 0.3f && rand <= 0.5f)
+        {
+            //paul.x--;
+            paul.x -= (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+        }  
+        else if (rand > 0.5f && rand <= 0.7f)
+        {
+            //paul.y++;
+            paul.y += (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+        }
+        else if (rand > 0.7f && rand < 0.9f)
+        {
+            //paul.y--;
+            paul.y -= (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
+        }*/
     
-    paul.Display();
+        paul.Display();
         
-    t += .01f;
-  }
+        t += .01f;
+    }
   
-  for (Tree tree : trees)
-  {
-    tree.drawTree();
-  }
+    for (Tree tree : trees)
+    {
+        tree.drawTree();
+    }
+  
+    new Collision(trees.get(0), pauls.get(0));
 }
 
 float MonteCarlo(float minStep, float maxStep)
 {
-  while (true)
-  {
-    float r1 = random(minStep, maxStep);
+    while (true)
+    {
+      float r1 = random(minStep, maxStep);
     
-    float probability = r1*r1;
+      float probability = r1*r1;
     
-    if (random(minStep, maxStep) <= probability) return r1;
-  }
+      if (random(minStep, maxStep) <= probability) return r1;
+    }
 }
 
 void mouseClicked()
 {
-  pauls.add(new Walker(mouseX, mouseY));
-  trees.add(new Tree(mouseX, mouseY, 64, 65f));
+    pauls.add(new Walker(mouseX, mouseY));
+    trees.add(new Tree(mouseX, mouseY, 64, 65f));
 }
