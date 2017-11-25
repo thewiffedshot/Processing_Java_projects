@@ -1,31 +1,23 @@
 class Walker
 {
-    int x, y;
+    PVector location;
     int distance = 0;
     int colorOffset = (int) random(0, 256);
     int D = 1;
-    float radius;
-    float[][] hitbox = new float[1][3];
-    String hitboxType = "Circle";
+    float radius = 16;
+    PVector[] hitbox = new PVector[2];
     
-    Walker()
+    Walker(PVector _location)
     {
-        // Dummy constructor for Object relation.
-    }
-    
-    Walker(int _x, int _y)
-    {
-        x = _x;
-        y = _y;
+        location = _location;
       
         createHitbox();
     }
     
     void createHitbox()
     {
-        hitbox[0][1] = x;
-        hitbox[0][2] = y;
-        hitbox[0][3] = radius * radius;      
+        hitbox[0] = location;
+        hitbox[1] = new PVector(radius, radius);     
     }
     
     void Display()
@@ -34,19 +26,10 @@ class Walker
       
         stroke(255 * ((sin(distance) + 1) / 2) + colorOffset, 255 * ((cos(distance * 0.01f) + 1) / 2) + colorOffset, 255 * ((sin(distance * 0.01f) + 1) / 2) - (3 * PI) + colorOffset, 200);
         fill(255 * ((sin(distance) + 1) / 2) + colorOffset, 255 * ((cos(distance * 0.01f) + 1) / 2) + colorOffset, 255 * ((sin(distance * 0.01f) + 1) / 2) - (3 * PI) + colorOffset, 200);
-        ellipse(x, y, radius, radius);
+        ellipse(location.x, location.y, radius, radius);
         
-        
-        
-        //background(-255 * ((sin(distance) + 1) / 2), -255 * ((cos(distance * 0.01f) + 1) / 2), -255 * ((sin(distance * 0.01f) + 1) / 2) - (3 * PI));
+        createHitbox();
         
         distance++;
-    }
-    
-    void ChangeBackground()
-    {
-        pushMatrix();
-          background(255 * ((sin(-distance) + 1) / 2), (255 * ((cos(distance * 0.01f) - 1) / 2)), 255 * ((sin(-distance * 0.01f) + 1) / 2) - (3 * PI));
-        popMatrix();
     }
 }

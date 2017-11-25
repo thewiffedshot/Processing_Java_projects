@@ -1,50 +1,100 @@
 class Collision
 {   
-    Object[] actorTypes = { new Tree(), new Walker() };
+    boolean check;
     
-    Tree[] trees = new Tree[2];
-    Walker[] walkers = new Walker[2];  
+    int collisionType = 0; // 0 - (polygon / polygon); 1 - (circle / circle); 2 - (polygon / circle);
     
     // Data for circles.
-    PVector centre1, centre2;
-    float radius1, radius2;
+    PVector[] centre = new PVector[2];
+    float[] radius = new float[2];
     
     // Data for polygons.
-    PVector polyCentre1, polyCentre2;
-    PVector[] polyPoints1, polyPoints2;
+    PVector[] polyCentre = new PVector[2];
+    PVector[][] polyPoints = new PVector[2][];
         
-    Collision(Object actor1, Object actor2)
+    Collision(PVector[] firstHitbox, PVector[] secondHitbox, String firstType, String secondType)
     {
-        checkActors(actor1, actor2);
+        int polyCounter = 0, circleCounter = 0;
+        ArrayList<String> detectedTypes = new ArrayList();
         
+        switch (firstType)
+        {
+            case "Polygon":                
+                polyCentre[polyCounter] = firstHitbox[0];
+                polyPoints[polyCounter] = new PVector[firstHitbox.length - 1];
+                
+                int i = 0;
+                
+                for (PVector point : firstHitbox)
+                {
+                    if (i != 0)
+                    {
+                        polyPoints[polyCounter][i - 1] = point;
+                    }
+                    
+                    i++;
+                }
+                
+                detectedTypes.add("Polygon");
+                polyCounter++;
+            break;
+            
+            case "Circle":
+                centre[circleCounter] = firstHitbox[0];
+                radius[circleCounter] = firstHitbox[1].x;
+                
+                detectedTypes.add("Circle");
+                circleCounter++;
+            break;
+            
+            default: throw new IllegalArgumentException("Such a collider type does not exist.");
+        }
         
+        switch (secondType)
+        {
+            case "Polygon":                
+                polyCentre[polyCounter] = secondHitbox[0];
+                polyPoints[polyCounter] = new PVector[secondHitbox.length - 1];
+                
+                int i = 0;
+                
+                for (PVector point : secondHitbox)
+                {
+                    if (i != 0)
+                    {
+                        polyPoints[polyCounter][i - 1] = point;
+                    }
+                    
+                    i++;
+                }
+                
+                detectedTypes.add("Polygon");
+                polyCounter++;
+            break;
+            
+            case "Circle":
+                centre[circleCounter] = secondHitbox[0];
+                radius[circleCounter] = secondHitbox[1].x;
+                
+                detectedTypes.add("Circle");
+                circleCounter++;
+            break;
+            
+            default: throw new IllegalArgumentException("Such a collider type does not exist.");
+        }
+        
+        if (detectedTypes.contains("Polygon") && detectedTypes.contains("Circle"))
+            collisionType = 2;
+        else if (detectedTypes.contains("Polygon"))
+            collisionType = 0;
+        else if (detectedTypes.contains("Circle"))
+            collisionType = 1;
+        
+        checkForCollision();
     }
       
-    void checkForCollision(String object1, String object2)
+    void checkForCollision()
     {
-        
-    }
-    
-    void checkActors(Object _actor1, Object _actor2)
-    {
-        boolean firstActorExists = false, secondActorExists = false;
-        
-        for (Object object : actorTypes)
-        {
-            if (object.getClass().isInstance(_actor1))
-            {
-                firstActorExists = true;
-            }
-            
-            if (object.getClass().isInstance(_actor2))
-            {
-                secondActorExists = true;
-            }
-        }
-        
-        if (!(firstActorExists && secondActorExists))
-        {
-            throw new RuntimeException("Specified type is not a valid actor.");
-        }
+        // TODO... ///
     }
 }

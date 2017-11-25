@@ -1,5 +1,6 @@
 import java.util.*;
 import java.lang.*;
+
 ArrayList<Walker> pauls = new ArrayList();
 ArrayList<Tree> trees = new ArrayList();
 Random randy = new Random();
@@ -20,10 +21,39 @@ void draw()
 {
     for(Walker paul : pauls)
     {
-        paul.x += map(noise(t), 0, 1, -50, 50); //MonteCarlo(-20, 20);
-        paul.y += map(noise(t + yOff), 0, 1, -50, 50); //MonteCarlo(-20, 20);
+        paul.location.x += map(noise(t), 0, 1, -50, 50); // MonteCarlo(-20, 20);
+        paul.location.y += map(noise(t + yOff), 0, 1, -50, 50); // MonteCarlo(-20, 20);
     
-        /*float rand = random(1);
+        paul.Display();
+        
+        t += .01f;
+    }
+  
+    for (Tree tree : trees)
+    {
+        tree.drawTree();
+    }
+}
+
+float MonteCarlo(float minStep, float maxStep)
+{
+    while (true)
+    {
+      float r1 = random(minStep, maxStep);
+    
+      float probability = r1*r1;
+    
+      if (random(minStep, maxStep) <= probability) return r1;
+    }
+}
+
+void mouseClicked()
+{
+    pauls.add(new Walker(new PVector(mouseX, mouseY)));
+    trees.add(new Tree(new PVector(mouseX, mouseY), 64, 65f));
+}
+
+/*float rand = random(1);
     
         if (paul.x <= 0 || paul.x >= width || paul.y <= 0 || paul.y >= height) paul.D = -1;
 
@@ -68,32 +98,3 @@ void draw()
             //paul.y--;
             paul.y -= (int)abs(walkDev *  (float) randy.nextGaussian() + distanceMean);
         }*/
-    
-        paul.Display();
-        
-        t += .01f;
-    }
-  
-    for (Tree tree : trees)
-    {
-        tree.drawTree();
-    }
-}
-
-float MonteCarlo(float minStep, float maxStep)
-{
-    while (true)
-    {
-      float r1 = random(minStep, maxStep);
-    
-      float probability = r1*r1;
-    
-      if (random(minStep, maxStep) <= probability) return r1;
-    }
-}
-
-void mouseClicked()
-{
-    pauls.add(new Walker(mouseX, mouseY));
-    trees.add(new Tree(mouseX, mouseY, 64, 65f));
-}
