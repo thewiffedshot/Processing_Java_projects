@@ -7,6 +7,7 @@ class Collision
     // Data for circles.
     PVector[] centre = new PVector[2];
     float[] radius = new float[2];
+    PVector[] circlePoints;
     
     // Data for polygons.
     PVector[] polyCentre = new PVector[2];
@@ -95,6 +96,58 @@ class Collision
       
     void checkForCollision()
     {
-        // TODO... ///
+        switch (collisionType)
+        {
+            case 0:
+                
+            break;
+            
+            case 1:
+            
+            break;
+            
+            case 2:
+                GenerateCirclePoints(2f, 1);
+                
+            break;
+        }
+    }
+    
+    void GenerateCirclePoints(float base, int circleInstance)
+    {
+        if (!(circleInstance == 1 || circleInstance == 2))
+            throw new IllegalArgumentException("Circle instance must be either 1 or 2.");
+        
+        circleInstance--;
+        
+        float radianIncrement = asin(base / (2 * radius[circleInstance]));
+        circlePoints = new PVector[ceil(2 * PI / radianIncrement)];
+        
+        for (int angle = 0, i = 0; angle < 2 * PI; angle += radianIncrement, i++)
+        {
+            circlePoints[i] = new PVector(centre[circleInstance].x + cos(angle) * radius[circleInstance], centre[circleInstance].y + sin(angle) * radius[circleInstance]);
+        }
+    }
+    
+    int CastRay()
+    {
+        switch (collisionType)
+        {
+            case 0:
+                
+            break;
+            
+            case 1:
+            
+            break;
+            
+            case 2:
+                for (PVector point : circlePoints)
+                {
+                    // TODO... //
+                }
+                
+            break;
+        }
     }
 }
