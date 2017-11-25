@@ -78,8 +78,6 @@ void draw()
     {
         tree.drawTree();
     }
-  
-    new Collision(trees.get(0), pauls.get(0));
 }
 
 float MonteCarlo(float minStep, float maxStep)

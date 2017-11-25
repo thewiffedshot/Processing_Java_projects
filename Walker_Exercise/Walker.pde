@@ -8,6 +8,11 @@ class Walker
     float[][] hitbox = new float[1][3];
     String hitboxType = "Circle";
     
+    Walker()
+    {
+        // Dummy constructor for Object relation.
+    }
+    
     Walker(int _x, int _y)
     {
         x = _x;
