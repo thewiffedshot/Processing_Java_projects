@@ -12,6 +12,7 @@ class Collision
     // Data for polygons.
     PVector[] polyCentre = new PVector[2];
     PVector[][] polyPoints = new PVector[2][];
+    PVector[][] vectors = new PVector[2][];
         
     Collision(PVector[] firstHitbox, PVector[] secondHitbox, String firstType, String secondType)
     {
@@ -20,7 +21,8 @@ class Collision
         
         switch (firstType)
         {
-            case "Polygon":                
+            case "Polygon":
+            
                 polyCentre[polyCounter] = firstHitbox[0];
                 polyPoints[polyCounter] = new PVector[firstHitbox.length - 1];
                 
@@ -38,14 +40,17 @@ class Collision
                 
                 detectedTypes.add("Polygon");
                 polyCounter++;
+                
             break;
             
             case "Circle":
+            
                 centre[circleCounter] = firstHitbox[0];
                 radius[circleCounter] = firstHitbox[1].x;
                 
                 detectedTypes.add("Circle");
                 circleCounter++;
+                
             break;
             
             default: throw new IllegalArgumentException("Such a collider type does not exist.");
@@ -53,7 +58,8 @@ class Collision
         
         switch (secondType)
         {
-            case "Polygon":                
+            case "Polygon": 
+            
                 polyCentre[polyCounter] = secondHitbox[0];
                 polyPoints[polyCounter] = new PVector[secondHitbox.length - 1];
                 
@@ -71,27 +77,64 @@ class Collision
                 
                 detectedTypes.add("Polygon");
                 polyCounter++;
+                
             break;
             
             case "Circle":
+            
                 centre[circleCounter] = secondHitbox[0];
                 radius[circleCounter] = secondHitbox[1].x;
                 
                 detectedTypes.add("Circle");
                 circleCounter++;
+                
             break;
             
             default: throw new IllegalArgumentException("Such a collider type does not exist.");
         }
         
         if (detectedTypes.contains("Polygon") && detectedTypes.contains("Circle"))
+        {
             collisionType = 2;
+            formulateVectors();
+        }
         else if (detectedTypes.contains("Polygon"))
+        {
             collisionType = 0;
+            formulateVectors();
+        }
         else if (detectedTypes.contains("Circle"))
             collisionType = 1;
         
         checkForCollision();
+    }
+    
+    void formulateVectors()
+    {
+        if (collisionType == 2)
+        {
+            vectors[0] = new PVector[polyPoints[0].length - 1];
+            
+            for (int i = 0, u = 1; i < vectors[0].length; i++, u++)
+            {
+                vectors[0][i] = polyPoints[0][u].copy().sub(polyPoints[0][i]);
+            }
+        }
+        else
+        {
+            vectors[0] = new PVector[polyPoints[0].length - 1];
+            vectors[1] = new PVector[polyPoints[1].length - 1];
+            
+            for (int i = 0, u = 1; i < vectors[0].length; i++, u++)
+            {
+                vectors[0][i] = polyPoints[0][u].copy().sub(polyPoints[0][i]);
+            }
+            
+            for (int i = 0, u = 1; i < vectors[1].length; i++, u++)
+            {
+                vectors[1][i] = polyPoints[1][u].copy().sub(polyPoints[1][i]);
+            }
+        }
     }
       
     void checkForCollision()
@@ -104,9 +147,13 @@ class Collision
             
             case 1:
             
+                GenerateCirclePoints(2f, 1);
+                GenerateCirclePoints(2f, 2);
+                
             break;
             
             case 2:
+            
                 GenerateCirclePoints(2f, 1);
                 
             break;
@@ -142,6 +189,7 @@ class Collision
             break;
             
             case 2:
+            
                 for (PVector point : circlePoints)
                 {
                     // TODO... //
@@ -149,5 +197,7 @@ class Collision
                 
             break;
         }
+        
+        return 0;
     }
 }
