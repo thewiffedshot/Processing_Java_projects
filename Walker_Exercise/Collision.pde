@@ -8,6 +8,7 @@ class Collision
     PVector[] centre = new PVector[2];
     float[] radius = new float[2];
     PVector[] circlePoints;
+    PVector[] circleRays;
     
     // Data for polygons.
     PVector[] polyCentre = new PVector[2];
@@ -155,6 +156,7 @@ class Collision
             case 2:
             
                 GenerateCirclePoints(2f, 1);
+                CastRays();
                 
             break;
         }
@@ -176,28 +178,31 @@ class Collision
         }
     }
     
-    int CastRay()
+    void CastRays()
     {
         switch (collisionType)
-        {
-            case 0:
-                
-            break;
-            
-            case 1:
-            
-            break;
-            
+        {            
             case 2:
-            
+                      
+                int i = 0;
+                
                 for (PVector point : circlePoints)
                 {
-                    // TODO... //
+                    if (point.x <= polyCentre[0].x)
+                    {
+                        circleRays[i] = new PVector(width - point.x, point.y);
+                    }
+                    else if (point.x > polyCentre[0].x)
+                    {
+                        circleRays[i] = new PVector(0 - point.x, point.y);
+                    }
+                    
+                    i++;
                 }
                 
             break;
+            
+            default: println("WARNING: Function call is redundant.");
         }
-        
-        return 0;
     }
 }
