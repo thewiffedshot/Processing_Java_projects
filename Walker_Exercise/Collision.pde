@@ -14,6 +14,7 @@ class Collision
     PVector[] polyCentre = new PVector[2];
     PVector[][] polyPoints = new PVector[2][];
     PVector[][] vectors = new PVector[2][];
+    PVector[][] vectorOrigins = new PVector[2][];
         
     Collision(PVector[] firstHitbox, PVector[] secondHitbox, String firstType, String secondType)
     {
@@ -37,6 +38,13 @@ class Collision
                     }
                     
                     i++;
+                }
+                
+                vectorOrigins[polyCounter] = new PVector[polyPoints[polyCounter].length - 1];
+                
+                for (int n = 0; n < polyPoints[polyCounter].length - 1; n++)
+                {
+                    vectorOrigins[polyCounter][i] = polyPoints[polyCounter][i]; 
                 }
                 
                 detectedTypes.add("Polygon");
