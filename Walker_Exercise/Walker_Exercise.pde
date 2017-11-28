@@ -3,6 +3,10 @@ import java.lang.*;
 
 ArrayList<Walker> pauls = new ArrayList();
 ArrayList<Tree> trees = new ArrayList();
+
+Walker paul;
+Tree tree;
+
 Random randy = new Random();
 
 void setup()
@@ -10,6 +14,9 @@ void setup()
     size(1280, 720);
     background(160, 160, 160);
     frameRate(60);
+    
+    paul = new Walker(new PVector(250, 0));
+    tree = new Tree(new PVector(width / 2, height / 2), 64, 65f);
 }
 
 float walkDev = 5;
@@ -19,20 +26,29 @@ float yOff = 1337;
 
 void draw()
 {
-    for(Walker paul : pauls)
-    {
-        paul.location.x += map(noise(t), 0, 1, -50, 50); // MonteCarlo(-20, 20);
-        paul.location.y += map(noise(t + yOff), 0, 1, -50, 50); // MonteCarlo(-20, 20);
+    PVector paulVelocity = new PVector(1, 1);
     
-        paul.Display();
+    if (!(new Collision(tree.points, paul.hitbox, "Polygon", "Circle").check)) paul.Move(paulVelocity);
+    
+    paul.Display();
+    tree.DrawTree();
+    
+    t += .01f;   
+    /*for (Tree tree : trees)
+    for(Walker paul : pauls)
+    {        
+        //println("---------------");
+        //println(paul.location);
+        //println("---------------");
+        if (!(new Collision(tree.points, paul.hitbox, "Polygon", "Circle").check)) paul.Move(paulVelocity);
+        //paul.location.x += map(noise(t), 0, 1, -50, 50); // MonteCarlo(-20, 20);
+        //paul.location.y += map(noise(t + yOff), 0, 1, -50, 50); // MonteCarlo(-20, 20);
         
-        t += .01f;
-    }
-  
-    for (Tree tree : trees)
-    {
+        paul.Display();
         tree.DrawTree();
-    }
+        
+        t += .01f;      
+    } */   
 }
 
 float MonteCarlo(float minStep, float maxStep)
@@ -49,8 +65,8 @@ float MonteCarlo(float minStep, float maxStep)
 
 void mouseClicked()
 {
-    pauls.add(new Walker(new PVector(mouseX, mouseY)));
-    trees.add(new Tree(new PVector(mouseX, mouseY), 64, 65f));
+    //if (mouseButton == LEFT) pauls.add(new Walker(new PVector(mouseX, mouseY)));
+    //if (mouseButton == RIGHT) trees.add(new Tree(new PVector(mouseX, mouseY), 64, 65f));
 }
 
 /*float rand = random(1);

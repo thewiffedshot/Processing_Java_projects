@@ -1,6 +1,7 @@
 class Collision
 {   
     boolean check;
+    PVector closestIntersectPoint;
     
     int collisionType = 0; // 0 - (polygon / polygon); 1 - (circle / circle); 2 - (polygon / circle);
     
@@ -44,7 +45,7 @@ class Collision
                 
                 for (int n = 0; n < polyPoints[polyCounter].length - 1; n++)
                 {
-                    vectorOrigins[polyCounter][i] = polyPoints[polyCounter][i]; 
+                    vectorOrigins[polyCounter][n] = polyPoints[polyCounter][n]; 
                 }
                 
                 detectedTypes.add("Polygon");
@@ -169,8 +170,12 @@ class Collision
                 int rayCounter = 0;
                 int intersects = 0;
                 
+                //printArray(circleRays);
+                
                 for (PVector ray : circleRays)
                 {
+                    intersects = 0;
+                    
                     PVector rayOrigin = circlePoints[rayCounter];
                     
                     float rayDotRay = ray.copy().dot(ray);
@@ -178,14 +183,16 @@ class Collision
                     
                     PVector originsVector;
                     
-                    float rayParameter;
-                    float segmentParameter;
+                    float rayParameter = 0;
+                    float segmentParameter = 0;
                     
                     float rayCrossSegment;
                     float originsCrossRay;
                     float originsCrossSegment;
                     
                     int segmentCounter = 0;
+                    
+                    //printArray(vectors[0]);
                     
                     for (PVector segment : vectors[0])
                     {
@@ -202,6 +209,8 @@ class Collision
                         boolean collinear = rayCrossSegment == 0 && originsCrossRay == 0;
                         boolean intersect = rayCrossSegment != 0 && (rayParameter >= 0 && rayParameter <= 1) && (segmentParameter >= 0 && segmentParameter <= 1); 
                         
+                        float minMagnitude = new PVector(width, height).mag();
+                        
                         if (collinear)
                         {
                             float firstParameter = originsVector.copy().dot(ray) / rayDotRay;
@@ -213,26 +222,48 @@ class Collision
                                 {
                                     intersects++;
                                     
-                                    // TODO: Store each intersection point in an array...
+                                    println("Collinear. +");
+                                    // TODO: Store intersection point in an array...
                                 }
                             }
-                            else
+                            else if ((secondParameter <= 0 && firstParameter >= 0) || (secondParameter >= 0 && secondParameter <= 1))
                             {
-                                // No intersection.
-                            }
+                                    intersects++;
+                                    
+                                    println("Collinear. -");
+                                    //println("Intersect.");
+                                    // TODO: Store intersection point in an array...
+                            } 
                         }
                         else if (intersect)
                         {
+                            intersects++;
                             
+                            //println("@@@@@@@@@@");
+                            //println(rayParameter);
+                            //println("----------");
+                            //println(segmentParameter);
+                            //println("Intersect.");                            
+                            
+                            
+                            PVector intersectPoint = rayOrigin.copy().add(ray.copy().mult(rayParameter));
+                            
+                            if (intersectPoint.mag() < minMagnitude) closestIntersectPoint  = intersectPoint;
                         }
                         
                         segmentCounter++;
                     }
                     
+                    println(intersects);
                     
+                    if (intersects % 2 != 0)
+                    {                                               
+                        check = true;
+                        break;
+                    }
                     
                     rayCounter++;
-                }
+                }              
                 
             break;
         }
@@ -247,10 +278,15 @@ class Collision
         
         float radianIncrement = asin(base / (2 * radius[circleInstance]));
         circlePoints = new PVector[ceil(2 * PI / radianIncrement)];
+        circleRays = new PVector[circlePoints.length];
         
-        for (int angle = 0, i = 0; angle < 2 * PI; angle += radianIncrement, i++)
+        int i = 0;
+        
+        for (float angle = 0; angle < 2 * PI; angle += radianIncrement)
         {
-            circlePoints[i] = new PVector(centre[circleInstance].x + cos(angle) * radius[circleInstance], centre[circleInstance].y + sin(angle) * radius[circleInstance]);
+            circlePoints[i] = new PVector(centre[circleInstance].x + cos(angle) * radius[circleInstance], centre[circleInstance].y - sin(angle) * radius[circleInstance]);
+            
+            i++;
         }
     }
     
@@ -264,14 +300,7 @@ class Collision
                 
                 for (PVector point : circlePoints)
                 {
-                    if (point.x <= polyCentre[0].x)
-                    {
-                        circleRays[i] = new PVector(width - point.x, point.y);
-                    }
-                    else if (point.x > polyCentre[0].x)
-                    {
-                        circleRays[i] = new PVector(0 - point.x, point.y);
-                    }
+                    circleRays[i] = new PVector(width - point.x, point.y);
                     
                     i++;
                 }
