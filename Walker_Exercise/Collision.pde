@@ -105,20 +105,20 @@ class Collision
         if (detectedTypes.contains("Polygon") && detectedTypes.contains("Circle"))
         {
             collisionType = 2;
-            formulateVectors();
+            FormulateVectors();
         }
         else if (detectedTypes.contains("Polygon"))
         {
             collisionType = 0;
-            formulateVectors();
+            FormulateVectors();
         }
         else if (detectedTypes.contains("Circle"))
             collisionType = 1;
         
-        checkForCollision();
+        CheckForCollision();
     }
     
-    void formulateVectors()
+    void FormulateVectors()
     {
         if (collisionType == 2)
         {
@@ -146,7 +146,7 @@ class Collision
         }
     }
       
-    void checkForCollision()
+    void CheckForCollision()
     {
         switch (collisionType)
         {
@@ -165,6 +165,74 @@ class Collision
             
                 GenerateCirclePoints(2f, 1);
                 CastRays();
+                
+                int rayCounter = 0;
+                int intersects = 0;
+                
+                for (PVector ray : circleRays)
+                {
+                    PVector rayOrigin = circlePoints[rayCounter];
+                    
+                    float rayDotRay = ray.copy().dot(ray);
+                    float segmentDotRay;
+                    
+                    PVector originsVector;
+                    
+                    float rayParameter;
+                    float segmentParameter;
+                    
+                    float rayCrossSegment;
+                    float originsCrossRay;
+                    float originsCrossSegment;
+                    
+                    int segmentCounter = 0;
+                    
+                    for (PVector segment : vectors[0])
+                    {
+                        segmentDotRay = segment.copy().dot(ray);
+                        
+                        rayCrossSegment = (ray.x * segment.y) - (ray.y * segment.x);
+                        originsVector = vectorOrigins[0][segmentCounter].copy().sub(rayOrigin);
+                        originsCrossSegment = (originsVector.x * segment.y) - (originsVector.y * segment.x);
+                        originsCrossRay = (originsVector.x * ray.y) - (originsVector.y * ray.x);
+                        
+                        rayParameter = originsCrossSegment / rayCrossSegment;
+                        segmentParameter = originsCrossRay / rayCrossSegment;
+                        
+                        boolean collinear = rayCrossSegment == 0 && originsCrossRay == 0;
+                        boolean intersect = rayCrossSegment != 0 && (rayParameter >= 0 && rayParameter <= 1) && (segmentParameter >= 0 && segmentParameter <= 1); 
+                        
+                        if (collinear)
+                        {
+                            float firstParameter = originsVector.copy().dot(ray) / rayDotRay;
+                            float secondParameter = firstParameter + ((segment.copy().dot(ray)) / rayDotRay);
+                            
+                            if (segmentDotRay >= 0)
+                            {
+                                if ((firstParameter <= 0 && secondParameter >= 0) || (firstParameter >= 0 && firstParameter <= 1))
+                                {
+                                    intersects++;
+                                    
+                                    // TODO: Store each intersection point in an array...
+                                }
+                            }
+                            else
+                            {
+                                // No intersection.
+                            }
+                        }
+                        else if (intersect)
+                        {
+                            
+                        }
+                        
+                        segmentCounter++;
+                    }
+                    
+                    
+                    
+                    rayCounter++;
+                }
                 
             break;
         }

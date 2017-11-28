@@ -31,7 +31,7 @@ void draw()
   
     for (Tree tree : trees)
     {
-        tree.drawTree();
+        tree.DrawTree();
     }
 }
 

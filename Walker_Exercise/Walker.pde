@@ -11,10 +11,10 @@ class Walker
     {
         location = _location;
       
-        createHitbox();
+        CreateHitbox();
     }
     
-    void createHitbox()
+    void CreateHitbox()
     {
         hitbox[0] = location;
         hitbox[1] = new PVector(radius, radius);     
@@ -28,7 +28,7 @@ class Walker
         fill(255 * ((sin(distance) + 1) / 2) + colorOffset, 255 * ((cos(distance * 0.01f) + 1) / 2) + colorOffset, 255 * ((sin(distance * 0.01f) + 1) / 2) - (3 * PI) + colorOffset, 200);
         ellipse(location.x, location.y, radius, radius);
         
-        createHitbox();
+        CreateHitbox();
         
         distance++;
     }

@@ -9,7 +9,7 @@ class Tree
     {
         location = _location;
     
-        createPoints();
+        CreatePoints();
     }
   
     Tree(PVector _location, float _size)
@@ -17,7 +17,7 @@ class Tree
         location = _location;
         size = _size;
     
-        createPoints();
+        CreatePoints();
     }
   
     Tree(PVector _location, float _size, float _angle)
@@ -26,10 +26,10 @@ class Tree
         size = _size;
         angle = constrain(_angle, 45, 70);
     
-        createPoints();
+        CreatePoints();
     }
   
-    void createPoints()
+    void CreatePoints()
     {
         points[0] = location;
         points[1] = new PVector(location.x, location.y - size); // C
@@ -41,7 +41,7 @@ class Tree
         points[7] = new PVector(location.x - (size / tan(radians(angle))), location.y); // A
     }
     
-    void drawTree()
+    void DrawTree()
     {
         pushMatrix();
             fill(0, 255, 0);
