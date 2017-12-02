@@ -16,6 +16,8 @@ class Collision
     PVector[][] polyPoints = new PVector[2][];
     PVector[][] vectors = new PVector[2][];
     PVector[][] vectorOrigins = new PVector[2][];
+    
+    private static final float Epsilon = 1e-5f;
         
     Collision(PVector[] firstHitbox, PVector[] secondHitbox, String firstType, String secondType)
     {
@@ -116,10 +118,10 @@ class Collision
         else if (detectedTypes.contains("Circle"))
             collisionType = 1;
         
-        CheckForCollision();
+        check = CheckForCollision();
     }
     
-    void FormulateVectors()
+    private void FormulateVectors()
     {
         if (collisionType == 2)
         {
@@ -130,7 +132,7 @@ class Collision
                 vectors[0][i] = polyPoints[0][u].copy().sub(polyPoints[0][i]);
             }
         }
-        else
+        else if (collisionType == 0)
         {
             vectors[0] = new PVector[polyPoints[0].length - 1];
             vectors[1] = new PVector[polyPoints[1].length - 1];
@@ -147,20 +149,22 @@ class Collision
         }
     }
       
-    void CheckForCollision()
+    private boolean CheckForCollision()
     {
         switch (collisionType)
         {
             case 0:
-                
-            break;
+                return false;
+            //break;
             
             case 1:
             
                 GenerateCirclePoints(2f, 1);
                 GenerateCirclePoints(2f, 2);
                 
-            break;
+                return false;
+                
+            //break;
             
             case 2:
             
@@ -206,8 +210,8 @@ class Collision
                         rayParameter = originsCrossSegment / rayCrossSegment;
                         segmentParameter = originsCrossRay / rayCrossSegment;
                         
-                        boolean collinear = rayCrossSegment == 0 && originsCrossRay == 0;
-                        boolean intersect = rayCrossSegment != 0 && (rayParameter >= 0 && rayParameter <= 1) && (segmentParameter >= 0 && segmentParameter <= 1); 
+                        boolean collinear = IsZero(rayCrossSegment) && IsZero(originsCrossRay);
+                        boolean intersect = !IsZero(rayCrossSegment) && (rayParameter >= 0 + Epsilon && rayParameter <= 1 - Epsilon) && (segmentParameter >= 0 + Epsilon && segmentParameter <= 1 - Epsilon); 
                         
                         float minMagnitude = new PVector(width, height).mag();
                         
@@ -216,9 +220,9 @@ class Collision
                             float firstParameter = originsVector.copy().dot(ray) / rayDotRay;
                             float secondParameter = firstParameter + ((segment.copy().dot(ray)) / rayDotRay);
                             
-                            if (segmentDotRay >= 0)
+                            if (segmentDotRay >= 0 + Epsilon)
                             {
-                                if ((firstParameter <= 0 && secondParameter >= 0) || (firstParameter >= 0 && firstParameter <= 1))
+                                if ((firstParameter <= 0 - Epsilon && secondParameter >= 0 + Epsilon) || (firstParameter >= 0 + Epsilon && firstParameter <= 1 - Epsilon))
                                 {
                                     intersects++;
                                     
@@ -226,7 +230,7 @@ class Collision
                                     // TODO: Store intersection point in an array...
                                 }
                             }
-                            else if ((secondParameter <= 0 && firstParameter >= 0) || (secondParameter >= 0 && secondParameter <= 1))
+                            else if ((secondParameter <= 0 - Epsilon && firstParameter >= 0 + Epsilon) || (secondParameter >= 0 + Epsilon && secondParameter <= 1 - Epsilon))
                             {
                                     intersects++;
                                     
@@ -237,14 +241,14 @@ class Collision
                         }
                         else if (intersect)
                         {
+                            if (segmentCounter != 0)
                             intersects++;
                             
-                            //println("@@@@@@@@@@");
-                            //println(rayParameter);
-                            //println("----------");
+                            println("----------");
+                            println(segmentCounter);
+                            println("----------");
                             //println(segmentParameter);
                             //println("Intersect.");                            
-                            
                             
                             PVector intersectPoint = rayOrigin.copy().add(ray.copy().mult(rayParameter));
                             
@@ -254,22 +258,25 @@ class Collision
                         segmentCounter++;
                     }
                     
+                    println("@@@@@@@@@@");
                     println(intersects);
+                    println("@@@@@@@@@@");
                     
                     if (intersects % 2 != 0)
                     {                                               
-                        check = true;
-                        break;
+                        return true;
                     }
                     
                     rayCounter++;
                 }              
-                
+                                
             break;
         }
+        
+        return false;
     }
     
-    void GenerateCirclePoints(float base, int circleInstance)
+    private void GenerateCirclePoints(float base, int circleInstance)
     {
         if (!(circleInstance == 1 || circleInstance == 2))
             throw new IllegalArgumentException("Circle instance must be either 1 or 2.");
@@ -290,7 +297,7 @@ class Collision
         }
     }
     
-    void CastRays()
+    private void CastRays()
     {
         switch (collisionType)
         {            
@@ -300,7 +307,7 @@ class Collision
                 
                 for (PVector point : circlePoints)
                 {
-                    circleRays[i] = new PVector(width - point.x, point.y);
+                    circleRays[i] = new PVector(width - point.x, 0);
                     
                     i++;
                 }
@@ -309,5 +316,12 @@ class Collision
             
             default: println("WARNING: Function call is redundant.");
         }
+    }
+    
+    private boolean IsZero(float f)
+    {
+        final float Epsilon = 0.00001;
+        
+        return abs(f) < Epsilon;
     }
 }

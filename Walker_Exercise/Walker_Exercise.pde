@@ -15,7 +15,7 @@ void setup()
     background(160, 160, 160);
     frameRate(60);
     
-    paul = new Walker(new PVector(250, 0));
+    paul = new Walker(new PVector(300, 0));
     tree = new Tree(new PVector(width / 2, height / 2), 64, 65f);
 }
 
@@ -26,13 +26,13 @@ float yOff = 1337;
 
 void draw()
 {
-    PVector paulVelocity = new PVector(1, 1);
+    PVector paulVelocity = new PVector(0.5, 0.5);
     
     if (!(new Collision(tree.points, paul.hitbox, "Polygon", "Circle").check)) paul.Move(paulVelocity);
     
-    paul.Display();
     tree.DrawTree();
-    
+    paul.Display();
+        
     t += .01f;   
     /*for (Tree tree : trees)
     for(Walker paul : pauls)
