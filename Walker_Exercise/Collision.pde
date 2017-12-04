@@ -9,12 +9,12 @@ class Collision
     PVector[] centre = new PVector[2];
     float[] radius = new float[2];
     PVector[] circlePoints;
-    PVector[] circleRays;
+    PVector[] circleEndPoints;
     
     // Data for polygons.
     PVector[] polyCentre = new PVector[2];
     PVector[][] polyPoints = new PVector[2][];
-    PVector[][] vectors = new PVector[2][];
+    PVector[][][] segments = new PVector[2][][];
     PVector[][] vectorOrigins = new PVector[2][];
     
     private static final float Epsilon = 1e-5f;
@@ -108,12 +108,12 @@ class Collision
         if (detectedTypes.contains("Polygon") && detectedTypes.contains("Circle"))
         {
             collisionType = 2;
-            FormulateVectors();
+            FormulateSegments();
         }
         else if (detectedTypes.contains("Polygon"))
         {
             collisionType = 0;
-            FormulateVectors();
+            FormulateSegments();
         }
         else if (detectedTypes.contains("Circle"))
             collisionType = 1;
@@ -121,30 +121,51 @@ class Collision
         check = CheckForCollision();
     }
     
-    private void FormulateVectors()
+    private void FormulateSegments()
     {
         if (collisionType == 2)
         {
-            vectors[0] = new PVector[polyPoints[0].length - 1];
+            segments[0] = new PVector[polyPoints[0].length - 1][];
             
-            for (int i = 0, u = 1; i < vectors[0].length; i++, u++)
+            for (int i = 0, u = 1; i < segments[0].length; i++, u++)
             {
-                vectors[0][i] = polyPoints[0][u].copy().sub(polyPoints[0][i]);
+                segments[0][i] = new PVector[2];
+                
+                segments[0][i][0] = polyPoints[0][i];
+                
+                if(i == polyPoints[0].length - 1)
+                    segments[0][i][1] = polyPoints[0][0];
+                else
+                    segments[0][i][1] = polyPoints[0][i + 1];
             }
         }
         else if (collisionType == 0)
         {
-            vectors[0] = new PVector[polyPoints[0].length - 1];
-            vectors[1] = new PVector[polyPoints[1].length - 1];
+            segments[0] = new PVector[polyPoints[0].length - 1][];
+            segments[1] = new PVector[polyPoints[1].length - 1][];
             
-            for (int i = 0, u = 1; i < vectors[0].length; i++, u++)
+            for (int i = 0, u = 1; i < segments[0].length; i++, u++)
             {
-                vectors[0][i] = polyPoints[0][u].copy().sub(polyPoints[0][i]);
+                segments[0][i] = new PVector[2];
+                
+                segments[0][i][0] = polyPoints[0][i];
+                
+                if(i == polyPoints[0].length - 1)
+                    segments[0][i][1] = polyPoints[0][0];
+                else
+                    segments[0][i][1] = polyPoints[0][i + 1];
             }
             
-            for (int i = 0, u = 1; i < vectors[1].length; i++, u++)
+            for (int i = 0, u = 1; i < segments[1].length; i++, u++)
             {
-                vectors[1][i] = polyPoints[1][u].copy().sub(polyPoints[1][i]);
+                segments[1][i] = new PVector[2];
+                
+                segments[1][i][0] = polyPoints[0][i];
+                
+                if(i == polyPoints[0].length - 1)
+                    segments[1][i][1] = polyPoints[0][0];
+                else
+                    segments[1][i][1] = polyPoints[0][i + 1];
             }
         }
     }
@@ -169,9 +190,9 @@ class Collision
             case 2:
             
                 GenerateCirclePoints(2f, 1);
-                CastRays();
+                CreateSegments();
                 
-                int rayCounter = 0;
+                /*int rayCounter = 0;
                 int intersects = 0;
                 
                 //printArray(circleRays);
@@ -268,7 +289,7 @@ class Collision
                     }
                     
                     rayCounter++;
-                }              
+                }*/              
                                 
             break;
         }
@@ -285,7 +306,7 @@ class Collision
         
         float radianIncrement = asin(base / (2 * radius[circleInstance]));
         circlePoints = new PVector[ceil(2 * PI / radianIncrement)];
-        circleRays = new PVector[circlePoints.length];
+        circleEndPoints = new PVector[circlePoints.length];
         
         int i = 0;
         
@@ -297,7 +318,7 @@ class Collision
         }
     }
     
-    private void CastRays()
+    private void CreateSegments()
     {
         switch (collisionType)
         {            
@@ -307,7 +328,7 @@ class Collision
                 
                 for (PVector point : circlePoints)
                 {
-                    circleRays[i] = new PVector(width - point.x, 0);
+                    circleEndPoints[i] = new PVector(width, point.y);
                     
                     i++;
                 }

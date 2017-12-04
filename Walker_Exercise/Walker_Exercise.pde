@@ -16,7 +16,7 @@ void setup()
     frameRate(60);
     
     paul = new Walker(new PVector(300, 0));
-    tree = new Tree(new PVector(width / 2, height / 2), 64, 65f);
+    tree = new Tree(new PVector(width / 2, height / 2), 120, 65f);
 }
 
 float walkDev = 5;
