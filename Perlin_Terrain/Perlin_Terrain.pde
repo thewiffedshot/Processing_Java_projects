@@ -1,3 +1,9 @@
+/* 
+   Terrain flight
+   by Simeon Laplev 
+   Date: 15th Jan 2018
+                       */
+
 int interval = 20;
 int rows, cols;
 float xOff = 0, yOff = 0;
