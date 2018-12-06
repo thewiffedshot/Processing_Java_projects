@@ -1,5 +1,3 @@
-// https://www.myphysicslab.com/pendulum/double-pendulum-en.html
-
 float x1 = 0, y1 = 0;
 float x2 = 0, y2 = 0;
 float length1 = 130;
