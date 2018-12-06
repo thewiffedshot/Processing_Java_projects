@@ -27,7 +27,7 @@ float m2_velocity = 0;
 float m1_acceleration = 0;
 float m2_acceleration = 0;
 float gravity = 9.8202437f;
-float drag = 0.999f;
+float drag = 0.995f;
 float prevTime = 0;
 float deltaTime = 0;
 float timePast = 0;
@@ -107,6 +107,15 @@ public void fixedTimeStep()
                   * (m1_velocity * m1_velocity * length1 * (mass1 + mass2) + gravity * (mass1 + mass2) 
                   * cos(angle1) + m2_velocity * m2_velocity * length2 * mass2 * cos(angle1 - angle2)))
                   / (length2 * (2 * mass1 + mass2 - mass2 * cos(2 * angle1 - 2 * angle2)));
+}
+
+public void mouseClicked()
+{
+  float mx = mouseX;
+  float my = mouseY;
+  
+  m1_velocity += map(mx, 0, 600, 0, 0.4f);
+  m2_velocity += map(my, 0, 600, 0, 0.4f);
 }
   public void settings() {  size(600,600); }
   static public void main(String[] passedArgs) {
