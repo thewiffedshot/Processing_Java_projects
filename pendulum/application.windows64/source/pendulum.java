@@ -114,8 +114,10 @@ public void mouseClicked()
   float mx = mouseX;
   float my = mouseY;
   
-  m1_velocity += map(mx, 0, 600, 0, 0.4f);
-  m2_velocity += map(my, 0, 600, 0, 0.4f);
+  m1_velocity += map(mx, 0, 300, -0.2f, 0);
+  m1_velocity += map(mx, 300, 600, 0, 0.2f);
+  m2_velocity += map(my, 0, 300, -0.2f, 0);
+  m2_velocity += map(my, 300, 600, 0, 0.2f);
 }
   public void settings() {  size(600,600); }
   static public void main(String[] passedArgs) {

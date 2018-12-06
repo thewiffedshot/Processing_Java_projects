@@ -98,6 +98,8 @@ void mouseClicked()
   float mx = mouseX;
   float my = mouseY;
   
-  m1_velocity += map(mx, 0, 600, 0, 0.4);
-  m2_velocity += map(my, 0, 600, 0, 0.4);
+  m1_velocity += map(mx, 0, 300, -0.2, 0);
+  m1_velocity += map(mx, 300, 600, 0, 0.2);
+  m2_velocity += map(my, 0, 300, -0.2, 0);
+  m2_velocity += map(my, 300, 600, 0, 0.2);
 }
