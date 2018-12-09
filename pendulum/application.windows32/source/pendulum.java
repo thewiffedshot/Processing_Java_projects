@@ -16,29 +16,37 @@ public class pendulum extends PApplet {
 
 float x1 = 0, y1 = 0;
 float x2 = 0, y2 = 0;
-float length1 = 130;
+float length1 = 150;
 float length2 = 100;
-float mass1 = 10;
-float mass2 = 10;
-float angle1 = 5*PI/6;
-float angle2 = -PI/3;
-float m1_velocity = 0.2f;
+float mass1 = 5;
+float mass2 = 3;
+float mMultiplier = 1;
+float angle1 = 2 * PI / 5;
+float angle2 = -PI / 6;
+float m1_velocity = 0;
 float m2_velocity = 0;
 float m1_acceleration = 0;
 float m2_acceleration = 0;
 float gravity = 9.8202437f;
-float drag = 0.995f;
+float drag = 0.996f;
 float prevTime = 0;
 float deltaTime = 0;
 float timePast = 0;
 PGraphics buffer;
+boolean climbing = true;
+float timeStep = 0; // fixed physics update in milliseconds
 
 public void setup()
 {
   
   background(255);
   
-  buffer = createGraphics(600, 600);  
+  mMultiplier = width * 0.015f;
+  
+  stroke(0);
+  strokeWeight(4);
+  
+  buffer = createGraphics(width, height, P2D );  
   buffer.beginDraw();
   buffer.background(255);
   buffer.endDraw();
@@ -51,25 +59,17 @@ public void draw()
   prevTime = millis();
   
   image(buffer, 0, 0);
-  stroke(0);
-  strokeWeight(2);
   
-  translate(300, 300);                  
+  translate(width / 2, height / 2);                  
   
-  if (timePast >= 5)
+  if (timePast >= timeStep)
   {
-    fixedTimeStep();
+    fixedTimeStep(timePast);
     timePast = 0;
   }
   
-  m1_velocity += m1_acceleration * deltaTime / 1000;
-  m2_velocity += m2_acceleration * deltaTime / 1000;
-  
   angle1 += m1_velocity;
   angle2 += m2_velocity;
-  
-  m1_velocity *= drag;
-  m2_velocity *= drag;
   
   x1 = length1 * sin(angle1);
   y1 = length1 * cos(angle1);
@@ -81,22 +81,26 @@ public void draw()
   line(0, 0, x1, y1);
   
   line(x1, y1, x2, y2);  
-  ellipse(x1, y1, mass1, mass1);
+  ellipse(x1, y1, mass1 * mMultiplier, mass1 * mMultiplier);
   
   fill(255, 0, 255);
-  ellipse(x2, y2, mass2, mass2); 
+  ellipse(x2, y2, mass2 * mMultiplier, mass2 * mMultiplier);
   
   buffer.beginDraw();
-  buffer.translate(300, 300);   
-  buffer.strokeWeight(0);
+  
+  buffer.endDraw();
+  
+  buffer.beginDraw();
+  buffer.translate(width / 2, height / 2); 
+  buffer.noStroke();
   buffer.fill(0, 255, 0, 40);
-  buffer.ellipse(x1, y1, 5, 5);
+  buffer.ellipse(x1, y1, mass1 * mMultiplier / 4, mass1 * mMultiplier / 4);
   buffer.fill(255, 0, 255, 40);
-  buffer.ellipse(x2, y2, 5, 5);
+  buffer.ellipse(x2, y2, mass2 * mMultiplier / 4, mass2 * mMultiplier / 4);
   buffer.endDraw();
 }
 
-public void fixedTimeStep()
+public void fixedTimeStep(float deltaTime)
 {
   m1_acceleration = (-gravity * (2 * mass1 + mass2) * sin(angle1) 
                   - mass2 * gravity * sin(angle1 - 2 * angle2) - 2 * sin(angle1 - angle2)
@@ -107,6 +111,12 @@ public void fixedTimeStep()
                   * (m1_velocity * m1_velocity * length1 * (mass1 + mass2) + gravity * (mass1 + mass2) 
                   * cos(angle1) + m2_velocity * m2_velocity * length2 * mass2 * cos(angle1 - angle2)))
                   / (length2 * (2 * mass1 + mass2 - mass2 * cos(2 * angle1 - 2 * angle2)));
+  
+  m1_velocity += m1_acceleration * deltaTime / 1000;
+  m2_velocity += m2_acceleration * deltaTime / 1000;
+  
+  m1_velocity *= drag;
+  m2_velocity *= drag;  
 }
 
 public void mouseClicked()
@@ -114,12 +124,29 @@ public void mouseClicked()
   float mx = mouseX;
   float my = mouseY;
   
-  m1_velocity += map(mx, 0, 300, -0.2f, 0);
-  m1_velocity += map(mx, 300, 600, 0, 0.2f);
-  m2_velocity += map(my, 0, 300, -0.2f, 0);
-  m2_velocity += map(my, 300, 600, 0, 0.2f);
+  if (mouseButton == LEFT)
+  {
+    m1_velocity += map(mx, 0, width / 2, -0.2f, 0);
+    m1_velocity += map(mx, width / 2, width, 0, 0.2f);
+  }
+  else if (mouseButton == RIGHT)
+  {
+    m2_velocity += map(mx, 0, width / 2, -0.2f, 0);
+    m2_velocity += map(mx, width / 2, width, 0, 0.2f);
+  }
 }
-  public void settings() {  size(600,600); }
+
+public void keyPressed()
+{
+  if (key == 'c' || key == 'C')
+  {
+    buffer.beginDraw();
+    buffer.fill(255, 255, 255, 255);
+    buffer.rect(0, 0, width, height);
+    buffer.endDraw();
+  }
+}
+  public void settings() {  size(600, 600, P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "pendulum" };
     if (passedArgs != null) {
